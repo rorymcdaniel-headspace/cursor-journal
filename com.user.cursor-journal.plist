@@ -20,6 +20,10 @@
         <integer>0</integer>
     </dict>
     
+    <!-- Backup: also run every 6 hours as catch-up for missed schedules -->
+    <key>StartInterval</key>
+    <integer>21600</integer>
+    
     <key>StandardOutPath</key>
     <string>/tmp/cursor-journal.stdout.log</string>
     
