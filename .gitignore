@@ -1,0 +1,10 @@
+# Logs
+*.log
+journal.log
+
+# Temporary files
+*.tmp
+.cursor-conversations-temp.json
+
+# macOS
+.DS_Store

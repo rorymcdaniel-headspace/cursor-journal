@@ -1,0 +1,18 @@
+Summarize today's Cursor AI conversations for my dev-journal.
+
+For each conversation in the JSON file, create an entry like:
+
+## [HH:MM] Brief Summary
+**Type:** feature | bugfix | refactor | infra | learning | planning
+**Impact:** low | medium | high  
+**Context:** [topic]
+
+Brief description of what was accomplished.
+
+**AI Assistance:** How AI helped
+
+Rules:
+- Skip empty or trivial conversations
+- Use the conversation name for the summary
+- Classify type based on first_message content
+- Keep descriptions to 1-2 sentences
