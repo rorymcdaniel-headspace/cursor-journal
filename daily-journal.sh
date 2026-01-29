@@ -18,6 +18,25 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
 }
 
+# macOS notification function
+notify() {
+    local title="$1"
+    local message="$2"
+    local sound="${3:-default}"  # default, Basso, Blow, Bottle, Frog, Funk, Glass, Hero, Morse, Ping, Pop, Purr, Sosumi, Submarine, Tink
+    
+    osascript -e "display notification \"$message\" with title \"$title\" sound name \"$sound\"" 2>/dev/null || true
+}
+
+# Success notification
+notify_success() {
+    notify "Dev Journal" "$1" "Glass"
+}
+
+# Error notification  
+notify_error() {
+    notify "Dev Journal Error" "$1" "Basso"
+}
+
 # Main function
 main() {
     log "Starting daily journal automation"
@@ -25,12 +44,14 @@ main() {
     # Check if dev-journal directory exists
     if [[ ! -d "$DEV_JOURNAL_DIR" ]]; then
         log "ERROR: Dev-journal directory not found at $DEV_JOURNAL_DIR"
+        notify_error "Dev-journal directory not found"
         exit 1
     fi
     
     # Check if cursor-agent is available
     if ! command -v cursor-agent &> /dev/null; then
         log "ERROR: cursor-agent not found in PATH"
+        notify_error "cursor-agent not found in PATH"
         exit 1
     fi
     
@@ -38,6 +59,7 @@ main() {
     log "Extracting today's conversations..."
     CONVERSATIONS=$("$SCRIPT_DIR/extract_conversations.py" --format json 2>&1) || {
         log "ERROR: Failed to extract conversations"
+        notify_error "Failed to extract conversations"
         exit 1
     }
     
@@ -46,6 +68,7 @@ main() {
     
     if [[ "$CONV_COUNT" == "0" ]]; then
         log "No conversations found for today. Exiting."
+        notify_success "No new conversations to log"
         exit 0
     fi
     
@@ -58,6 +81,7 @@ main() {
     # Read the prompt template
     if [[ ! -f "$PROMPT_TEMPLATE" ]]; then
         log "ERROR: Prompt template not found at $PROMPT_TEMPLATE"
+        notify_error "Prompt template not found"
         exit 1
     fi
     
@@ -100,9 +124,12 @@ Read the conversation JSON and process each conversation according to the duplic
     
     if [[ $AGENT_EXIT_CODE -ne 0 ]]; then
         log "WARNING: cursor-agent exited with code $AGENT_EXIT_CODE"
+        notify_error "cursor-agent failed (exit code $AGENT_EXIT_CODE)"
+        exit 1
     fi
     
     log "Daily journal automation completed"
+    notify_success "Journal updated with $CONV_COUNT conversation(s)"
 }
 
 # Run main function
