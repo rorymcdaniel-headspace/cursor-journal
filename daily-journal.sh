@@ -29,7 +29,7 @@ notify() {
 
 # Success notification
 notify_success() {
-    notify "Dev Journal" "$1" "Glass"
+    notify "Dev Journal" "$1" "Funk"
 }
 
 # Error notification  
