@@ -1,18 +1,52 @@
 Summarize today's Cursor AI conversations for my dev-journal.
 
-For each conversation in the JSON file, create an entry like:
+## Entry Format
 
+```markdown
 ## [HH:MM] Brief Summary
+
 **Type:** feature | bugfix | refactor | infra | learning | planning
 **Impact:** low | medium | high  
 **Context:** [topic]
 
 Brief description of what was accomplished.
 
-**AI Assistance:** How AI helped
+**Files touched:** (if applicable)
+- `path/to/file.py` - description
 
-Rules:
-- Skip empty or trivial conversations
-- Use the conversation name for the summary
-- Classify type based on first_message content
+**Impact context:** (if applicable)
+- Cross-team effects
+- Connection to initiatives
+
+**AI Assistance:** How AI helped
+```
+
+## Duplicate Handling (IMPORTANT)
+
+Before creating any entry, check the existing journal file for duplicates:
+
+1. **Match by topic similarity** - Compare each conversation's subject matter to existing entries. A conversation about "deadlock fix" matches an entry about "database deadlock resolution" even if worded differently.
+
+2. **If matched and content is equivalent** - SKIP entirely. Do not create a duplicate.
+
+3. **If matched but additional detail exists** - MODIFY the existing entry in place to add:
+   - New files touched that weren't mentioned
+   - New impact context (cross-team effects, connections to initiatives)
+   - Outcome updates (e.g., change "investigating" to "resolved")
+   - Additional description of what was accomplished
+   
+4. **If no match found** - Create a new entry.
+
+## Rules
+
+- Skip empty or trivial conversations (no messages, untitled with no content)
+- Use the conversation name as a starting point for the summary
+- Classify type based on the work described in first_message
 - Keep descriptions to 1-2 sentences
+- When modifying existing entries, preserve the original timestamp
+
+## After Writing
+
+1. `git add logs/YYYY-MM-DD.md`
+2. `git commit -m "Auto-journal: YYYY-MM-DD"`
+3. `git push`

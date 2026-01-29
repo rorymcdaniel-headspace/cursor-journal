@@ -67,8 +67,17 @@ main() {
     TEMP_DATA_FILE="$DEV_JOURNAL_DIR/.cursor-conversations-temp.json"
     echo "$CONVERSATIONS" > "$TEMP_DATA_FILE"
     
-    # Build a concise prompt
-    SHORT_PROMPT="Read .cursor-conversations-temp.json which contains today's ($TODAY) AI conversations. For each meaningful one, create a dev-journal entry. Reference logs/2026-01-28.md for the format. Append entries to $JOURNAL_FILE (create if needed, with header '# $TODAY'). Skip empty conversations. Then git add, commit with 'Auto-journal: $TODAY', and push."
+    # Build the prompt with instructions from template
+    PROMPT_INSTRUCTIONS=$(cat "$PROMPT_TEMPLATE")
+    SHORT_PROMPT="$PROMPT_INSTRUCTIONS
+
+## Data Files
+
+- Conversation data: .cursor-conversations-temp.json
+- Today's date: $TODAY  
+- Journal file: $JOURNAL_FILE (create with header '# $TODAY' if it doesn't exist)
+
+Read the conversation JSON and process each conversation according to the duplicate handling rules above."
     
     log "Invoking cursor-agent for summarization..."
     
